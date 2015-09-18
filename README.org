@@ -1,0 +1,23 @@
+* Godiksam
+
+A clone of Diksam by golang.
+
+** SYNOPSIS
+
+Diksam is a programming language (http://kmaebashi.com/programmer/devlang/).
+
+Diksam features:
+- Written in C
+- Orthodox procedural language
+- Orthodox class-based object oriented language
+- Statically typed
+- Garbage collector
+- Compiling bytecode and VM executes it
+
+Godiksam is scratched in golang refering Diksam source.
+
+
+** LICENSE
+
+Godiksam is public domain software.
+
