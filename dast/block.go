@@ -19,6 +19,10 @@ func (b *Block) Add(child Node) {
 	b.children = append(b.children, child)
 }
 
+func (b *Block) Append(children []Node) {
+	b.children = append(b.children, children...)
+}
+
 func (b *Block) dump(w io.Writer, nest int) {
 	header(b, w, nest, true)
 	dumpNodes(b.children, w, nest+1)
