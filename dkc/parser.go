@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"container/list"
 	"fmt"
-	"godiksam/dast"
+	"github.com/arikui1911/Godiksam/dast"
 	"io"
 	"os"
 	"strconv"
@@ -15,15 +15,15 @@ import (
 type Token struct {
 	Symbol int
 	Value  interface{}
-	Line   int
-	Column int
+	line   int
+	column int
 }
 
-func (t *Token) GetLine() int   { return t.Line }
-func (t *Token) GetColumn() int { return t.Column }
+func (t *Token) Line() int   { return t.line }
+func (t *Token) Column() int { return t.column }
 
 func (t *Token) String() string {
-	return fmt.Sprintf("&%T{%d:%d:%s:%v}", t, t.Line, t.Column, tokName(t.Symbol), t.Value)
+	return fmt.Sprintf("&%T{%d:%d:%s:%v}", t, t.Line(), t.Column(), tokName(t.Symbol), t.Value)
 }
 
 type Parser struct {
@@ -77,14 +77,14 @@ func (p *Parser) Line() int {
 	if p.lastToken == nil {
 		return p.line
 	}
-	return p.lastToken.Line
+	return p.lastToken.Line()
 }
 
 func (p *Parser) Column() int {
 	if p.lastToken == nil {
 		return p.column
 	}
-	return p.lastToken.Column
+	return p.lastToken.Column()
 }
 
 func (p *Parser) Error(msg string) {
@@ -104,8 +104,8 @@ func (p *Parser) reportError(e error) {
 func (p *Parser) Lex(lval *yySymType) int {
 	t := &Token{
 		Symbol: 0,
-		Line:   p.line,
-		Column: p.column,
+		line:   p.line,
+		column: p.column,
 	}
 	err := p.lexLoop(t)
 	if err != nil && err != io.EOF {
@@ -136,8 +136,8 @@ func (p *Parser) lexLoop(t *Token) error {
 		}
 		switch state {
 		case kSTATE_INITIAL:
-			t.Line = p.line
-			t.Column = p.column
+			t.line = p.line
+			t.column = p.column
 			switch {
 			case unicode.IsSpace(c):
 				// do nothing

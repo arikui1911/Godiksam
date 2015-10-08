@@ -2,15 +2,17 @@ package t
 
 import (
 	"fmt"
-	"godiksam/dast"
-	"godiksam/dkc"
+	"github.com/arikui1911/Godiksam/dast"
+	"github.com/arikui1911/Godiksam/dkc"
 	"os"
 	"strings"
 )
 
 func ExampleParser() {
 	src := `
-123;
+if (123) {
+  456;
+}
 `
 
 	p := dkc.NewParser(strings.NewReader(src), "(test)", 1)

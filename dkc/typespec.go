@@ -9,9 +9,13 @@ const (
 	ttSTRING
 )
 
-type typeSpec struct {
+type TypeSpec struct {
 	base     baseType
 	subtypes []subtype_t
+}
+
+func newTypeSpec(base baseType) *TypeSpec {
+	return &TypeSpec{base: base}
 }
 
 type subtype_t interface{}

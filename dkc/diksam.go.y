@@ -3,7 +3,7 @@ package dkc
 
 import (
     "fmt"
-    "godiksam/dast"
+    "github.com/arikui1911/Godiksam/dast"
 )
 
 func tokName(c int) string {
@@ -23,7 +23,7 @@ func tokName(c int) string {
 func addTopLevelStmt(l yyLexer, stmt dast.Node) {
     p := l.(*Parser)
     if p.Tree == nil {
-        p.Tree = dast.NewBlock(stmt.Line(), stmt.Column())
+        p.Tree = dast.NewBlock(stmt)
     }
     p.Tree.(*dast.Block).Add(stmt)
 }
@@ -43,15 +43,16 @@ func closeBlock(l yyLexer, block dast.Node, stmts []dast.Node) dast.Node {
 %}
 
 %union {
-    token    *Token
-    node      dast.Node
-    nodes     []dast.Node
-    typeSpec  baseType
+	token    *Token
+	ident     string
+	node      dast.Node
+	nodes     []dast.Node
+	typeSpec  baseType
 }
 
 %token<token> kIF kELSE kELSIF kSWITCH kCASE kDEFAULT kWHILE kDO kFOR kFOREACH
-              kRETURN kBREAK kCONTINUE kNULL kTRUE kFALSE kTRY kCATCH kFINALLY
-              kTHROW kTHROWS kBOOLEAN kVOID kINT kDOUBLE kSTRING kNATIVE_POINTER
+			  kRETURN kBREAK kCONTINUE kNULL kTRUE kFALSE kTRY kCATCH kFINALLY
+			  kTHROW kTHROWS kBOOLEAN kVOID kINT kDOUBLE kSTRING kNATIVE_POINTER
               kNEW kREQUIRE kRENAME kCLASS kINTERFACE kPUBLIC kPRIVATE kVIRTUAL
               kOVERRIDE kABSTRACT kTHIS kSUPER kCONSTRUCTOR kINSTANCEOF
               kDELEGATE kENUM kFINAL kCONST tEQ tNE tGE tLE tADD_A tSUB_A
@@ -61,7 +62,8 @@ func closeBlock(l yyLexer, block dast.Node, stmts []dast.Node) dast.Node {
 %type<node>  stmt block_beg block if_tail opt_expr expr assign log_or log_and
              equality relational additive multive unary postfix primary
 %type<nodes> stmts params args
-%type<token> opt_label opt_ident '{' ';' ',' '=' '<' '>' '+' '-' '*' '/' '%' '!' '('
+%type<token> '{' ';' ',' '=' '<' '>' '+' '-' '*' '/' '%' '!' '('
+%type<ident> opt_label opt_ident
 %type<typeSpec> type_spec
 
 
@@ -76,7 +78,7 @@ def_or_stmt : def_func
             | stmt
     {
         addTopLevelStmt(yylex, $1)
-    }
+	}
 
 type_spec : kBOOLEAN { $$ = ttBOOLEAN }
           | kINT     { $$ = ttINT }
@@ -87,7 +89,7 @@ def_func : type_spec tIDENT '(' params ')' block
     {
         defun(yylex, $2, $1, $2, $4, $6)
     }
-         | type_spec tIDENT '(' ')' block
+ 		 | type_spec tIDENT '(' ')' block
     {
         defun(yylex, $2, $1, $2, nil, $5)
     }
@@ -96,22 +98,22 @@ def_func : type_spec tIDENT '(' params ')' block
         defun(yylex, $2, $1, $2, $4, nil)
     }
          | type_spec tIDENT '(' ')' ';'
-    {
+ 	{
         defun(yylex, $2, $1, $2, nil, nil)
     }
 
 params : type_spec tIDENT
     {
-        $$ = append(make([]dast.Node, 0), dast.NewParam($2, $1, $2))
+        $$ = append(make([]dast.Node, 0), dast.NewParam($2, newTypeSpec($1), $2.Value.(string)))
     }
        | params ',' type_spec tIDENT
     {
-        $$ = append($1, dast.NewParam($4, $3, $4))
+        $$ = append($1, dast.NewParam($4, newTypeSpec($3), $4.Value.(string)))
     }
 
 block_beg : '{'
     {
-        $$ = openBlock(yylex, $1)
+		$$ = openBlock(yylex, $1)
     }
 
 block : block_beg '}'
@@ -138,11 +140,11 @@ stmt : expr ';'
     }
      | type_spec tIDENT ';'
     {
-        $$ = dast.NewDecl($2, $1, $2, nil)
+        $$ = dast.NewDecl($2, newTypeSpec($1), $2.Value.(string), nil)
     }
      | type_spec tIDENT '=' expr ';'
     {
-        $$ = dast.NewDecl($2, $1, $2, $4)
+        $$ = dast.NewDecl($2, newTypeSpec($1), $2.Value.(string), $4)
     }
      | kIF '(' expr ')' block if_tail
     {
@@ -150,7 +152,7 @@ stmt : expr ';'
     }
      | opt_label kWHILE '(' expr ')' block
     {
-        $$ = dast.NewWhile($2, $1,$4, $6)
+        $$ = dast.NewWhile($2, $1, $4, $6)
     }
      | opt_label kFOR '(' opt_expr ';' opt_expr ';' opt_expr ')' block
     {
@@ -158,7 +160,7 @@ stmt : expr ';'
     }
      | opt_label kFOREACH '(' tIDENT ':' expr ')' block
     {
-        $$ = dast.NewForeach($2, $1, $4, $6, $8)
+        $$ = dast.NewForeach($2, $1, $4.Value.(string), $6, $8)
     }
      | kRETURN opt_expr ';'
     {
@@ -172,17 +174,17 @@ stmt : expr ';'
     {
         $$ = dast.NewContinue($1, $2)
     }
-     | kTRY block kCATCH '(' expr ')' block
+     | kTRY block kCATCH '(' tIDENT ')' block
     {
-        $$ = dast.NewTry($1, $2, $5, $7, nil)
+        $$ = dast.NewTry($1, $2, $5.Value.(string), $7, nil)
     }
      | kTRY block kFINALLY block
     {
-        $$ = dast.NewTry($1, $2, nil, nil, $4)
+        $$ = dast.NewTry($1, $2, "", nil, $4)
     }
-     | kTRY block kCATCH '(' expr ')' block kFINALLY block
+     | kTRY block kCATCH '(' tIDENT ')' block kFINALLY block
     {
-        $$ = dast.NewTry($1, $2, $5, $7, $9)
+        $$ = dast.NewTry($1, $2, $5.Value.(string), $7, $9)
     }
      | kTHROW expr ';'
     {
@@ -204,9 +206,12 @@ if_tail :
 
 opt_label :
     {
-        $$ = nil
+        $$ = ""
     }
           | tIDENT ':'
+	{
+		$$ = $1.Value.(string)
+	}
 
 opt_expr :
     {
@@ -216,9 +221,12 @@ opt_expr :
 
 opt_ident :
     {
-        $$ = nil
+        $$ = ""
     }
           | tIDENT
+	{
+		$$ = $1.Value.(string)
+	}
 
 expr : assign
      | expr ',' assign

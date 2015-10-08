@@ -6,7 +6,7 @@ import __yyfmt__ "fmt"
 //line diksam.go.y:3
 import (
 	"fmt"
-	"godiksam/dast"
+	"github.com/arikui1911/Godiksam/dast"
 )
 
 func tokName(c int) string {
@@ -26,7 +26,7 @@ func tokName(c int) string {
 func addTopLevelStmt(l yyLexer, stmt dast.Node) {
 	p := l.(*Parser)
 	if p.Tree == nil {
-		p.Tree = dast.NewBlock(stmt.Line(), stmt.Column())
+		p.Tree = dast.NewBlock(stmt)
 	}
 	p.Tree.(*dast.Block).Add(stmt)
 }
@@ -46,6 +46,7 @@ func closeBlock(l yyLexer, block dast.Node, stmts []dast.Node) dast.Node {
 type yySymType struct {
 	yys      int
 	token    *Token
+	ident    string
 	node     dast.Node
 	nodes    []dast.Node
 	typeSpec baseType
@@ -203,7 +204,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line diksam.go.y:386
+//line diksam.go.y:394
 
 //line yacctab:1
 var yyExca = []int{
@@ -218,66 +219,66 @@ const yyPrivate = 57344
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 288
+const yyLast = 281
 
 var yyAct = []int{
 
-	51, 153, 18, 6, 5, 45, 4, 147, 55, 7,
-	171, 40, 162, 46, 131, 40, 40, 54, 89, 9,
-	10, 11, 170, 29, 30, 12, 164, 159, 13, 69,
-	14, 40, 15, 16, 17, 139, 137, 40, 88, 21,
-	87, 40, 145, 85, 41, 86, 138, 136, 127, 58,
-	59, 60, 61, 62, 64, 65, 40, 98, 33, 97,
-	101, 102, 103, 104, 105, 106, 109, 113, 57, 26,
-	27, 28, 83, 19, 84, 80, 80, 63, 74, 75,
-	14, 35, 15, 16, 17, 36, 25, 125, 126, 163,
-	32, 128, 46, 146, 129, 132, 80, 64, 65, 143,
-	40, 98, 92, 134, 72, 73, 80, 80, 80, 53,
-	80, 80, 80, 80, 80, 80, 80, 80, 80, 83,
-	63, 84, 76, 77, 78, 140, 70, 71, 144, 91,
-	82, 99, 40, 118, 119, 148, 90, 124, 160, 150,
-	149, 39, 40, 142, 152, 135, 156, 53, 151, 31,
-	46, 158, 157, 53, 141, 161, 130, 49, 38, 24,
+	51, 153, 18, 6, 5, 45, 4, 147, 55, 171,
+	159, 64, 65, 46, 40, 40, 40, 54, 58, 59,
+	60, 61, 62, 64, 65, 170, 164, 145, 14, 69,
+	15, 16, 17, 139, 63, 162, 131, 57, 137, 89,
+	88, 40, 40, 85, 138, 86, 63, 87, 33, 136,
+	29, 30, 127, 113, 76, 77, 78, 98, 7, 97,
+	101, 102, 103, 104, 105, 106, 109, 41, 9, 10,
+	11, 163, 29, 30, 12, 74, 75, 13, 83, 14,
+	84, 15, 16, 17, 83, 124, 84, 125, 126, 82,
+	32, 128, 46, 40, 129, 132, 26, 27, 28, 146,
+	47, 98, 53, 134, 72, 73, 143, 40, 35, 99,
+	40, 92, 36, 25, 107, 39, 40, 34, 26, 27,
+	28, 91, 19, 118, 119, 140, 70, 71, 144, 90,
+	35, 53, 151, 160, 36, 25, 148, 133, 142, 150,
+	149, 53, 141, 135, 152, 130, 156, 31, 49, 38,
+	46, 158, 157, 79, 81, 161, 56, 24, 66, 169,
 	165, 114, 115, 116, 117, 168, 166, 46, 7, 167,
-	172, 173, 174, 29, 30, 175, 56, 66, 9, 10,
-	11, 22, 29, 30, 12, 67, 68, 13, 7, 14,
-	169, 15, 16, 17, 93, 94, 48, 3, 9, 10,
-	11, 1, 29, 30, 12, 8, 34, 13, 50, 14,
-	108, 15, 16, 17, 154, 155, 123, 111, 112, 26,
-	27, 28, 96, 47, 29, 30, 110, 23, 26, 27,
-	28, 35, 19, 20, 52, 36, 25, 107, 100, 2,
-	35, 37, 79, 81, 36, 25, 0, 133, 26, 27,
-	28, 14, 19, 15, 16, 17, 42, 0, 43, 44,
-	35, 0, 0, 0, 36, 25, 0, 95, 0, 0,
-	26, 27, 28, 0, 47, 0, 0, 0, 0, 0,
-	0, 0, 35, 120, 121, 122, 36, 25,
+	172, 173, 174, 29, 30, 175, 22, 3, 9, 10,
+	11, 1, 29, 30, 12, 67, 68, 13, 7, 14,
+	8, 15, 16, 17, 120, 121, 122, 108, 9, 10,
+	11, 21, 29, 30, 12, 154, 155, 13, 123, 14,
+	48, 15, 16, 17, 96, 111, 112, 93, 94, 26,
+	27, 28, 50, 47, 110, 2, 23, 37, 26, 27,
+	28, 35, 19, 100, 20, 36, 25, 80, 80, 14,
+	35, 15, 16, 17, 36, 25, 52, 95, 26, 27,
+	28, 42, 19, 43, 44, 0, 0, 0, 80, 0,
+	35, 0, 0, 0, 36, 25, 0, 0, 80, 80,
+	80, 0, 80, 80, 80, 80, 80, 80, 80, 80,
+	80,
 }
 var yyPact = []int{
 
-	5, 5, -1000, -1000, -1000, 90, 71, -37, 246, 206,
-	89, 89, 40, 206, -1000, -1000, -1000, -1000, -1000, -76,
-	113, -4, 115, -1000, 136, 206, -1000, -1000, -1000, -1000,
-	-1000, 53, 3, 45, -1000, 206, 206, -1000, 49, -1000,
-	206, 206, -41, -43, -63, 66, -30, -1000, 59, -1000,
-	32, 173, 184, -1000, 61, -1000, 206, 206, 206, 206,
-	206, 206, 206, 155, -1000, -1000, 206, 206, 206, -15,
-	206, 206, 206, 206, 206, 206, 206, 206, 206, -1000,
-	39, -1000, 55, -1000, 206, -1000, -34, 206, 206, 88,
-	-1000, -1000, -1000, -67, 40, -1000, 164, -1000, 77, -1000,
-	115, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -35, -1000,
-	136, 53, 53, -1000, 3, 3, 3, 3, 45, 45,
-	-1000, -1000, -1000, -36, 84, 75, 29, 40, -40, 23,
-	-77, 206, -1000, -1000, -1000, 2, -1000, 206, 78, 226,
-	-1000, -1000, -1000, -1000, 209, 40, 206, 206, -55, -1000,
-	-1000, -1000, 70, -1000, 40, -69, -1000, 19, -56, 40,
-	-1000, -1000, 206, 206, 40, 168, -60, -72, -1000, 40,
-	40, 40, -1000, 209, -1000, -1000,
+	184, 184, -1000, -1000, -1000, 81, 45, -14, 241, 155,
+	80, 80, 33, 155, -1000, -1000, -1000, -1000, -1000, -76,
+	93, -35, 96, -1000, 136, 155, -1000, -1000, -1000, -1000,
+	-1000, 53, 0, -23, -1000, 155, 155, -1000, 8, -1000,
+	155, 155, -34, -41, -42, 59, 22, -1000, 51, -1000,
+	41, 196, 164, -1000, 39, -1000, 155, 155, 155, 155,
+	155, 155, 155, 32, -1000, -1000, 155, 155, 155, -29,
+	155, 155, 155, 155, 155, 155, 155, 155, 155, -1000,
+	-47, -1000, 3, -1000, 155, -1000, -30, 155, 155, 77,
+	-1000, -1000, -1000, -45, 33, -1000, 54, -1000, 75, -1000,
+	96, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -33, -1000,
+	136, 53, 53, -1000, 0, 0, 0, 0, -23, -23,
+	-1000, -1000, -1000, -38, 72, 70, 36, 33, -55, 29,
+	-77, 68, -1000, -1000, -1000, 14, -1000, 155, 62, 214,
+	-1000, -1000, -1000, -1000, 200, 33, 155, 155, -72, -1000,
+	-1000, -1000, 65, -1000, 33, -46, -1000, 1, -56, 33,
+	-1000, -1000, 155, 155, 33, 137, -57, -73, -1000, 33,
+	33, 33, -1000, 200, -1000, -1000,
 }
 var yyPgo = []int{
 
-	0, 6, 234, 0, 1, 5, 3, 2, 233, 181,
-	159, 149, 90, 58, 206, 39, 227, 222, 216, 210,
-	205, 196, 4, 201, 239, 197,
+	0, 6, 246, 0, 1, 5, 3, 2, 234, 176,
+	157, 147, 90, 48, 117, 201, 226, 214, 208, 197,
+	190, 210, 4, 181, 225, 177,
 }
 var yyR1 = []int{
 
@@ -319,7 +320,7 @@ var yyChk = []int{
 	-10, -11, -11, 82, -12, -12, -12, -12, -13, -13,
 	-14, -14, -14, -18, 82, -22, -6, 82, -6, -5,
 	68, 81, -3, 83, -1, 68, 82, 71, 82, 71,
-	-3, 70, 68, 70, -3, 82, 70, 84, -6, -7,
+	-3, 70, 68, 70, -3, 82, 70, 84, 68, -7,
 	-3, 70, -22, -4, 5, 6, -3, -5, -6, 82,
 	68, -3, 81, 70, 82, -3, -6, -5, -3, 22,
 	82, 82, -3, -3, -3, -4,
@@ -601,383 +602,389 @@ yydefault:
 	switch yynt {
 
 	case 4:
-		//line diksam.go.y:77
+		//line diksam.go.y:79
 		{
 			addTopLevelStmt(yylex, yyS[yypt-0].node)
 		}
 	case 5:
-		//line diksam.go.y:81
+		//line diksam.go.y:83
 		{
 			yyVAL.typeSpec = ttBOOLEAN
 		}
 	case 6:
-		//line diksam.go.y:82
+		//line diksam.go.y:84
 		{
 			yyVAL.typeSpec = ttINT
 		}
 	case 7:
-		//line diksam.go.y:83
+		//line diksam.go.y:85
 		{
 			yyVAL.typeSpec = ttDOUBLE
 		}
 	case 8:
-		//line diksam.go.y:84
+		//line diksam.go.y:86
 		{
 			yyVAL.typeSpec = ttSTRING
 		}
 	case 9:
-		//line diksam.go.y:87
+		//line diksam.go.y:89
 		{
 			defun(yylex, yyS[yypt-4].token, yyS[yypt-5].typeSpec, yyS[yypt-4].token, yyS[yypt-2].nodes, yyS[yypt-0].node)
 		}
 	case 10:
-		//line diksam.go.y:91
+		//line diksam.go.y:93
 		{
 			defun(yylex, yyS[yypt-3].token, yyS[yypt-4].typeSpec, yyS[yypt-3].token, nil, yyS[yypt-0].node)
 		}
 	case 11:
-		//line diksam.go.y:95
+		//line diksam.go.y:97
 		{
 			defun(yylex, yyS[yypt-4].token, yyS[yypt-5].typeSpec, yyS[yypt-4].token, yyS[yypt-2].nodes, nil)
 		}
 	case 12:
-		//line diksam.go.y:99
+		//line diksam.go.y:101
 		{
 			defun(yylex, yyS[yypt-3].token, yyS[yypt-4].typeSpec, yyS[yypt-3].token, nil, nil)
 		}
 	case 13:
-		//line diksam.go.y:104
+		//line diksam.go.y:106
 		{
-			yyVAL.nodes = append(make([]dast.Node, 0), dast.NewParam(yyS[yypt-0].token, yyS[yypt-1].typeSpec, yyS[yypt-0].token))
+			yyVAL.nodes = append(make([]dast.Node, 0), dast.NewParam(yyS[yypt-0].token, newTypeSpec(yyS[yypt-1].typeSpec), yyS[yypt-0].token.Value.(string)))
 		}
 	case 14:
-		//line diksam.go.y:108
+		//line diksam.go.y:110
 		{
-			yyVAL.nodes = append(yyS[yypt-3].nodes, dast.NewParam(yyS[yypt-0].token, yyS[yypt-1].typeSpec, yyS[yypt-0].token))
+			yyVAL.nodes = append(yyS[yypt-3].nodes, dast.NewParam(yyS[yypt-0].token, newTypeSpec(yyS[yypt-1].typeSpec), yyS[yypt-0].token.Value.(string)))
 		}
 	case 15:
-		//line diksam.go.y:113
+		//line diksam.go.y:115
 		{
 			yyVAL.node = openBlock(yylex, yyS[yypt-0].token)
 		}
 	case 16:
-		//line diksam.go.y:118
+		//line diksam.go.y:120
 		{
 			yyVAL.node = closeBlock(yylex, yyS[yypt-1].node, nil)
 		}
 	case 17:
-		//line diksam.go.y:122
+		//line diksam.go.y:124
 		{
 			yyVAL.node = closeBlock(yylex, yyS[yypt-2].node, yyS[yypt-1].nodes)
 		}
 	case 18:
-		//line diksam.go.y:127
+		//line diksam.go.y:129
 		{
 			yyVAL.nodes = append(make([]dast.Node, 0), yyS[yypt-0].node)
 		}
 	case 19:
-		//line diksam.go.y:131
+		//line diksam.go.y:133
 		{
 			yyVAL.nodes = append(yyS[yypt-1].nodes, yyS[yypt-0].node)
 		}
 	case 20:
-		//line diksam.go.y:136
+		//line diksam.go.y:138
 		{
 			yyVAL.node = dast.NewExprStmt(yyS[yypt-0].token, yyS[yypt-1].node)
 		}
 	case 21:
-		//line diksam.go.y:140
+		//line diksam.go.y:142
 		{
-			yyVAL.node = dast.NewDecl(yyS[yypt-1].token, yyS[yypt-2].typeSpec, yyS[yypt-1].token, nil)
+			yyVAL.node = dast.NewDecl(yyS[yypt-1].token, newTypeSpec(yyS[yypt-2].typeSpec), yyS[yypt-1].token.Value.(string), nil)
 		}
 	case 22:
-		//line diksam.go.y:144
+		//line diksam.go.y:146
 		{
-			yyVAL.node = dast.NewDecl(yyS[yypt-3].token, yyS[yypt-4].typeSpec, yyS[yypt-3].token, yyS[yypt-1].node)
+			yyVAL.node = dast.NewDecl(yyS[yypt-3].token, newTypeSpec(yyS[yypt-4].typeSpec), yyS[yypt-3].token.Value.(string), yyS[yypt-1].node)
 		}
 	case 23:
-		//line diksam.go.y:148
+		//line diksam.go.y:150
 		{
 			yyVAL.node = dast.NewIf(yyS[yypt-5].token, yyS[yypt-3].node, yyS[yypt-1].node, yyS[yypt-0].node)
 		}
 	case 24:
-		//line diksam.go.y:152
+		//line diksam.go.y:154
 		{
-			yyVAL.node = dast.NewWhile(yyS[yypt-4].token, yyS[yypt-5].token, yyS[yypt-2].node, yyS[yypt-0].node)
+			yyVAL.node = dast.NewWhile(yyS[yypt-4].token, yyS[yypt-5].ident, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 25:
-		//line diksam.go.y:156
+		//line diksam.go.y:158
 		{
-			yyVAL.node = dast.NewFor(yyS[yypt-8].token, yyS[yypt-9].token, yyS[yypt-6].node, yyS[yypt-4].node, yyS[yypt-2].node, yyS[yypt-0].node)
+			yyVAL.node = dast.NewFor(yyS[yypt-8].token, yyS[yypt-9].ident, yyS[yypt-6].node, yyS[yypt-4].node, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 26:
-		//line diksam.go.y:160
+		//line diksam.go.y:162
 		{
-			yyVAL.node = dast.NewForeach(yyS[yypt-6].token, yyS[yypt-7].token, yyS[yypt-4].token, yyS[yypt-2].node, yyS[yypt-0].node)
+			yyVAL.node = dast.NewForeach(yyS[yypt-6].token, yyS[yypt-7].ident, yyS[yypt-4].token.Value.(string), yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 27:
-		//line diksam.go.y:164
+		//line diksam.go.y:166
 		{
 			yyVAL.node = dast.NewReturn(yyS[yypt-2].token, yyS[yypt-1].node)
 		}
 	case 28:
-		//line diksam.go.y:168
+		//line diksam.go.y:170
 		{
-			yyVAL.node = dast.NewBreak(yyS[yypt-2].token, yyS[yypt-1].token)
+			yyVAL.node = dast.NewBreak(yyS[yypt-2].token, yyS[yypt-1].ident)
 		}
 	case 29:
-		//line diksam.go.y:172
+		//line diksam.go.y:174
 		{
-			yyVAL.node = dast.NewContinue(yyS[yypt-2].token, yyS[yypt-1].token)
+			yyVAL.node = dast.NewContinue(yyS[yypt-2].token, yyS[yypt-1].ident)
 		}
 	case 30:
-		//line diksam.go.y:176
+		//line diksam.go.y:178
 		{
-			yyVAL.node = dast.NewTry(yyS[yypt-6].token, yyS[yypt-5].node, yyS[yypt-2].node, yyS[yypt-0].node, nil)
+			yyVAL.node = dast.NewTry(yyS[yypt-6].token, yyS[yypt-5].node, yyS[yypt-2].token.Value.(string), yyS[yypt-0].node, nil)
 		}
 	case 31:
-		//line diksam.go.y:180
+		//line diksam.go.y:182
 		{
-			yyVAL.node = dast.NewTry(yyS[yypt-3].token, yyS[yypt-2].node, nil, nil, yyS[yypt-0].node)
+			yyVAL.node = dast.NewTry(yyS[yypt-3].token, yyS[yypt-2].node, "", nil, yyS[yypt-0].node)
 		}
 	case 32:
-		//line diksam.go.y:184
+		//line diksam.go.y:186
 		{
-			yyVAL.node = dast.NewTry(yyS[yypt-8].token, yyS[yypt-7].node, yyS[yypt-4].node, yyS[yypt-2].node, yyS[yypt-0].node)
+			yyVAL.node = dast.NewTry(yyS[yypt-8].token, yyS[yypt-7].node, yyS[yypt-4].token.Value.(string), yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 33:
-		//line diksam.go.y:188
+		//line diksam.go.y:190
 		{
 			yyVAL.node = dast.NewThrow(yyS[yypt-2].token, yyS[yypt-1].node)
 		}
 	case 34:
-		//line diksam.go.y:193
+		//line diksam.go.y:195
 		{
 			yyVAL.node = nil
 		}
 	case 35:
-		//line diksam.go.y:197
+		//line diksam.go.y:199
 		{
 			yyVAL.node = yyS[yypt-0].node
 		}
 	case 36:
-		//line diksam.go.y:201
+		//line diksam.go.y:203
 		{
 			yyVAL.node = dast.NewIf(yyS[yypt-5].token, yyS[yypt-3].node, yyS[yypt-1].node, yyS[yypt-0].node)
 		}
 	case 37:
-		//line diksam.go.y:206
+		//line diksam.go.y:208
 		{
-			yyVAL.token = nil
+			yyVAL.ident = ""
 		}
 	case 38:
-		yyVAL.token = yyS[yypt-0].token
-	case 39:
 		//line diksam.go.y:212
+		{
+			yyVAL.ident = yyS[yypt-1].token.Value.(string)
+		}
+	case 39:
+		//line diksam.go.y:217
 		{
 			yyVAL.node = nil
 		}
 	case 40:
 		yyVAL.node = yyS[yypt-0].node
 	case 41:
-		//line diksam.go.y:218
+		//line diksam.go.y:223
 		{
-			yyVAL.token = nil
+			yyVAL.ident = ""
 		}
 	case 42:
-		yyVAL.token = yyS[yypt-0].token
+		//line diksam.go.y:227
+		{
+			yyVAL.ident = yyS[yypt-0].token.Value.(string)
+		}
 	case 43:
 		yyVAL.node = yyS[yypt-0].node
 	case 44:
-		//line diksam.go.y:225
+		//line diksam.go.y:233
 		{
 			yyVAL.node = dast.NewCommaExpr(yyS[yypt-1].token, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 45:
 		yyVAL.node = yyS[yypt-0].node
 	case 46:
-		//line diksam.go.y:231
+		//line diksam.go.y:239
 		{
 			yyVAL.node = dast.NewAssign(yyS[yypt-1].token, dast.NORMAL_ASSIGN, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 47:
-		//line diksam.go.y:235
+		//line diksam.go.y:243
 		{
 			yyVAL.node = dast.NewAssign(yyS[yypt-1].token, dast.ADD_ASSIGN, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 48:
-		//line diksam.go.y:239
+		//line diksam.go.y:247
 		{
 			yyVAL.node = dast.NewAssign(yyS[yypt-1].token, dast.SUB_ASSIGN, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 49:
-		//line diksam.go.y:243
+		//line diksam.go.y:251
 		{
 			yyVAL.node = dast.NewAssign(yyS[yypt-1].token, dast.MUL_ASSIGN, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 50:
-		//line diksam.go.y:247
+		//line diksam.go.y:255
 		{
 			yyVAL.node = dast.NewAssign(yyS[yypt-1].token, dast.DIV_ASSIGN, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 51:
-		//line diksam.go.y:251
+		//line diksam.go.y:259
 		{
 			yyVAL.node = dast.NewAssign(yyS[yypt-1].token, dast.MOD_ASSIGN, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 52:
 		yyVAL.node = yyS[yypt-0].node
 	case 53:
-		//line diksam.go.y:257
+		//line diksam.go.y:265
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.LOG_OR, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 54:
 		yyVAL.node = yyS[yypt-0].node
 	case 55:
-		//line diksam.go.y:263
+		//line diksam.go.y:271
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.LOG_AND, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 56:
 		yyVAL.node = yyS[yypt-0].node
 	case 57:
-		//line diksam.go.y:269
+		//line diksam.go.y:277
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.EQ, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 58:
-		//line diksam.go.y:273
+		//line diksam.go.y:281
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.NE, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 59:
 		yyVAL.node = yyS[yypt-0].node
 	case 60:
-		//line diksam.go.y:279
+		//line diksam.go.y:287
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.GT, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 61:
-		//line diksam.go.y:283
+		//line diksam.go.y:291
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.LT, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 62:
-		//line diksam.go.y:287
+		//line diksam.go.y:295
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.GE, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 63:
-		//line diksam.go.y:291
+		//line diksam.go.y:299
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.LE, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 64:
 		yyVAL.node = yyS[yypt-0].node
 	case 65:
-		//line diksam.go.y:297
+		//line diksam.go.y:305
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.ADD, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 66:
-		//line diksam.go.y:301
+		//line diksam.go.y:309
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.SUB, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 67:
 		yyVAL.node = yyS[yypt-0].node
 	case 68:
-		//line diksam.go.y:307
+		//line diksam.go.y:315
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.MUL, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 69:
-		//line diksam.go.y:311
+		//line diksam.go.y:319
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.DIV, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 70:
-		//line diksam.go.y:315
+		//line diksam.go.y:323
 		{
 			yyVAL.node = dast.NewBinary(yyS[yypt-1].token, dast.MOD, yyS[yypt-2].node, yyS[yypt-0].node)
 		}
 	case 71:
 		yyVAL.node = yyS[yypt-0].node
 	case 72:
-		//line diksam.go.y:321
+		//line diksam.go.y:329
 		{
 			yyVAL.node = dast.NewMinusExpr(yyS[yypt-1].token, yyS[yypt-0].node)
 		}
 	case 73:
-		//line diksam.go.y:325
+		//line diksam.go.y:333
 		{
 			yyVAL.node = dast.NewLogNot(yyS[yypt-1].token, yyS[yypt-0].node)
 		}
 	case 74:
 		yyVAL.node = yyS[yypt-0].node
 	case 75:
-		//line diksam.go.y:331
+		//line diksam.go.y:339
 		{
 			yyVAL.node = dast.NewFuncall(yyS[yypt-1].token, yyS[yypt-2].node, nil)
 		}
 	case 76:
-		//line diksam.go.y:335
+		//line diksam.go.y:343
 		{
 			yyVAL.node = dast.NewFuncall(yyS[yypt-2].token, yyS[yypt-3].node, yyS[yypt-1].nodes)
 		}
 	case 77:
-		//line diksam.go.y:339
+		//line diksam.go.y:347
 		{
-			yyVAL.node = dast.NewIncDec(yyS[yypt-0].token, yyS[yypt-1].node, +1)
+			yyVAL.node = dast.NewIncDec(yyS[yypt-0].token, yyS[yypt-1].node, dast.INC)
 		}
 	case 78:
-		//line diksam.go.y:343
+		//line diksam.go.y:351
 		{
-			yyVAL.node = dast.NewIncDec(yyS[yypt-0].token, yyS[yypt-1].node, -1)
+			yyVAL.node = dast.NewIncDec(yyS[yypt-0].token, yyS[yypt-1].node, dast.DEC)
 		}
 	case 79:
-		//line diksam.go.y:348
+		//line diksam.go.y:356
 		{
 			yyVAL.node = yyS[yypt-1].node
 		}
 	case 80:
-		//line diksam.go.y:352
+		//line diksam.go.y:360
 		{
 			yyVAL.node = dast.NewIdentExpr(yyS[yypt-0].token, yyS[yypt-0].token.Value.(string))
 		}
 	case 81:
-		//line diksam.go.y:356
-		{
-			yyVAL.node = dast.NewIntExpr(yyS[yypt-0].token, yyS[yypt-0].token.Value.(int))
-		}
-	case 82:
-		//line diksam.go.y:360
-		{
-			yyVAL.node = dast.NewDoubleExpr(yyS[yypt-0].token, yyS[yypt-0].token.Value.(float64))
-		}
-	case 83:
 		//line diksam.go.y:364
 		{
-			yyVAL.node = dast.NewStrExpr(yyS[yypt-0].token, yyS[yypt-0].token.Value.(string))
+			yyVAL.node = dast.NewIntLiteral(yyS[yypt-0].token, yyS[yypt-0].token.Value.(int))
 		}
-	case 84:
+	case 82:
 		//line diksam.go.y:368
 		{
-			yyVAL.node = dast.NewBooleanExpr(yyS[yypt-0].token, true)
+			yyVAL.node = dast.NewDoubleLiteral(yyS[yypt-0].token, yyS[yypt-0].token.Value.(float64))
 		}
-	case 85:
+	case 83:
 		//line diksam.go.y:372
 		{
-			yyVAL.node = dast.NewBooleanExpr(yyS[yypt-0].token, false)
+			yyVAL.node = dast.NewStrLiteral(yyS[yypt-0].token, yyS[yypt-0].token.Value.(string))
+		}
+	case 84:
+		//line diksam.go.y:376
+		{
+			yyVAL.node = dast.NewBooleanLiteral(yyS[yypt-0].token, true)
+		}
+	case 85:
+		//line diksam.go.y:380
+		{
+			yyVAL.node = dast.NewBooleanLiteral(yyS[yypt-0].token, false)
 		}
 	case 86:
-		//line diksam.go.y:377
+		//line diksam.go.y:385
 		{
 			yyVAL.nodes = append(make([]dast.Node, 0), yyS[yypt-0].node)
 		}
 	case 87:
-		//line diksam.go.y:381
+		//line diksam.go.y:389
 		{
 			yyVAL.nodes = append(yyS[yypt-2].nodes, yyS[yypt-0].node)
 		}

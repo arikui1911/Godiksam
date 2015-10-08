@@ -9,9 +9,9 @@ type Block struct {
 	children []Node
 }
 
-func NewBlock(line int, col int) *Block {
+func NewBlock(pos PositionHolder) *Block {
 	b := &Block{children: make([]Node, 0)}
-	b.init(line, col)
+	b.init(pos)
 	return b
 }
 

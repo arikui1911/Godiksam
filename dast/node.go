@@ -17,13 +17,15 @@ type nodeBase struct {
 }
 
 type PositionHolder interface {
-	GetLine() int
-	GetColumn() int
+	Line() int
+	Column() int
 }
 
+type TypeSpec interface{}
+
 func (n *nodeBase) init(pos PositionHolder) {
-	n.line = pos.GetLine()
-	n.col = pos.GetColumn()
+	n.line = pos.Line()
+	n.col = pos.Column()
 }
 
 func (n *nodeBase) Line() int   { return n.line }
