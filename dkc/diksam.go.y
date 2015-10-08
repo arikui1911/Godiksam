@@ -32,11 +32,20 @@ func defun(l yyLexer, pos *Token, typeSpec baseType, name *Token, params []dast.
 }
 
 func openBlock(l yyLexer, pos *Token) dast.Node {
-    return nil
+    p := l.(*Parser)
+    b := dast.NewBlock(pos)
+    p.PushBlock(b)    
+    return b
 }
 
 func closeBlock(l yyLexer, block dast.Node, stmts []dast.Node) dast.Node {
-    return nil
+    p := l.(*Parser)
+    b := p.PopBlock()
+    if b != block {
+        panic("block stack might be broken")
+    }
+    b.Append(stmts)
+    return b
 }
 
 
