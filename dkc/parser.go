@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"container/list"
 	"fmt"
-	"github.com/arikui1911/Godiksam/dast"
 	"io"
 	"os"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/arikui1911/Godiksam/dast"
 )
 
 type Token struct {
@@ -37,6 +38,7 @@ type Parser struct {
 	lastErr     error
 	ErrorCount  int
 	OnError     func(*Parser, error)
+	blocks      *list.List
 }
 
 func NewParser(src io.Reader, srcFileName string, initialLineNumber int) *Parser {
@@ -46,6 +48,7 @@ func NewParser(src io.Reader, srcFileName string, initialLineNumber int) *Parser
 		SrcFileName: srcFileName,
 		line:        initialLineNumber,
 		column:      -1,
+		blocks:      list.New(),
 	}
 }
 
@@ -71,6 +74,17 @@ func (p *Parser) ungetch(c rune) {
 		p.line--
 	}
 	p.ungetcheds.PushFront(c)
+}
+
+func (p *Parser) PushBlock(b *dast.Block) {
+	p.blocks.PushFront(b)
+}
+
+func (p *Parser) PopBlock() *dast.Block {
+	if p.blocks.Len() <= 0 {
+		return nil
+	}
+	return p.blocks.Remove(p.blocks.Front()).(*dast.Block)
 }
 
 func (p *Parser) Line() int {
